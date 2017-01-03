@@ -275,7 +275,7 @@ void setup()
   
   lcdBegin(); // This will setup our pins, and initialize the LCD
   updateDisplay(); // with displayMap untouched, SFE logo
-  setContrast(62); // Good values range from 40-60
+  setContrast(60); // Good values range from 40-60
   delay(2000);
   
   //lcdFunTime(); // Runs a 30-second demo of graphics functions
@@ -285,6 +285,7 @@ void setup()
 //    ;
   clearDisplay(WHITE);
   updateDisplay();
+  analogWrite(blPin,220); // blPin is ocnnected to BL LED
 }
 
 // Loop turns the display into a local serial monitor echo.
