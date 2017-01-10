@@ -59,7 +59,7 @@ void loop(void) {
   if (tagdetected)
     delay(10000);
   else
-    delay(1000);
+    delay(500);
 }
 
 void readTag(){
