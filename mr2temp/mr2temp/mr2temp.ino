@@ -70,7 +70,7 @@ This table contains the hex values that represent pixels for a
 font that is 5 pixels wide and 8 pixels high. Each byte in a row
 represents one, 8-pixel, vertical column of a character. 5 bytes
 per character. */
-static const byte ASCII[][5] = {
+static const byte ASCII[][5] PROGMEM = {
   // First 32 characters (0x00-0x19) are ignored. These are
   // non-displayable, control characters.
    {0x00, 0x00, 0x00, 0x00, 0x00} // 0x20  
@@ -277,14 +277,15 @@ void setup()
   //mySerial.println("Hello, world?");
   sensor_inhouse.begin();  
   lcdBegin(); // This will setup our pins, and initialize the LCD
-  //setBitmap(mk1eagle);
   updateDisplay(); // with displayMap untouched, SFE logo
   setContrast(60); // Good values range from 40-60
-  clearDisplay(WHITE);
-  updateDisplay();
   analogWrite(blPin,220); // blPin is ocnnected to BL LED
+  clearDisplay(WHITE);
+  setBitmap(mk1eagle);
+  updateDisplay();
   pinMode(4, OUTPUT);  
   digitalWrite(4, HIGH);
+  delay(1000);
 }
 
 // Loop turns the display into a local serial monitor echo.
@@ -333,7 +334,7 @@ void loop()
     setStr(nfound, 0, 30, BLACK);
   }
   //Serial.print("CharPointer: ");
-  //Serial.println(buff);
+  Serial.println(buff);
   updateDisplay();
 }
 
@@ -372,7 +373,8 @@ void setChar(char character, int x, int y, boolean bw)
   byte column; // temp byte to store character's column bitmap
   for (int i=0; i<5; i++) // 5 columns (x) per character
   {
-    column = ASCII[character - 0x20][i];
+    //column = ASCII[character - 0x20][i];
+    column = pgm_read_byte_near((*(ASCII + count) + i)); //     ASCII[character - 0x20][i];
     for (int j=0; j<8; j++) // 8 rows (y) per character
     {
       if (column & (0x01 << j)) // test bits to set pixels
@@ -412,8 +414,9 @@ void setStr(char * dString, int x, int y, boolean bw)
 void setBitmap(char * bitArray)
 {
   for (int i=0; i<(LCD_WIDTH * LCD_HEIGHT / 8); i++)
-    displayMap[i] = bitArray[i];
-}
+    //displayMap[i] = bitArray[i];
+    displayMap[i] = pgm_read_byte_near(bitArray + i);
+}   
 
 // This function clears the entire display either white (0) or
 // black (1).
